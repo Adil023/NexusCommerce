@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: Adil
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            - tableExists:
+                tableName: users
+                schemaName: public
+
+      changes:
+        - createTable:
+            tableName: users
+            schemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: user_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: email
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: phone_number
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true

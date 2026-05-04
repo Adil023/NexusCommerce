@@ -1,0 +1,115 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/v1/users/**, /v1/auth/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 1
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@ipKeyResolver}"
+
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/v1/product/**
+
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/v1/cart/**
+
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/v1/payments/**
+
+        - id: user-service-openapi
+          uri: lb://user-service
+          predicates:
+            - Path=/v3/api-docs/user-service
+          filters:
+            - SetPath=/v3/api-docs
+
+        - id: product-service-openapi
+          uri: lb://product-service
+          predicates:
+            - Path=/v3/api-docs/product-service
+          filters:
+            - SetPath=/v3/api-docs
+
+        - id: payment-service-openapi
+          uri: lb://payment-service
+          predicates:
+            - Path=/v3/api-docs/payment-service
+          filters:
+            - SetPath=/v3/api-docs
+
+        - id: cart-service-openapi
+          uri: lb://cart-service
+          predicates:
+            - Path=/v3/api-docs/cart-service
+          filters:
+            - SetPath=/v3/api-docs
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  messages:
+    basename: i18n/error/messages
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: user-service
+        url: /v3/api-docs/user-service
+      - name: product-service
+        url: /v3/api-docs/product-service
+      - name: payment-service
+        url: /v3/api-docs/payment-service
+      - name: cart-service
+        url: /v3/api-docs/cart-service
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+jwt:
+  secret: ${JWT_SECRET:MySuperSecretFallbackKeyForLocalDemo123456789!}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,gateway,health,info
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.data.redis: DEBUG

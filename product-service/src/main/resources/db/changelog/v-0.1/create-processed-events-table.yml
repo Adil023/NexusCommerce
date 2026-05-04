@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-processed-events
+      author: Adil
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            - tableExists:
+                tableName: processed_events
+                schemaName: public
+      changes:
+        - createTable:
+            tableName: processed_events
+            schemaName: public
+            columns:
+              - column:
+                  name: event_id
+                  type: VARCHAR(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: processed_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false

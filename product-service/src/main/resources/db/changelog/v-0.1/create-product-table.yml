@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Adil
+
+      changes:
+        - createTable:
+            tableName: products
+            schemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_description
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_price
+                  type: DECIMAL(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: stock_count
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: color
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: size
+                  type: INTEGER
+                  constraints:
+                    nullable: false
